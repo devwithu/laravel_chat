@@ -20,9 +20,8 @@ class ChatController extends Controller
     }
 
     //request $request
-    public function send() {
-        $message = 'hello';
+    public function send(request $request) {
         $user = User::find(Auth::id());
-        event(new ChatEvent($message, $user));
+        event(new ChatEvent($request->message, $user));
     }
 }
