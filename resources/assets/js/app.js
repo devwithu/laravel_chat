@@ -13,6 +13,9 @@ import Vue from 'vue'
 import VueChatScroll from "vue-chat-scroll/src/vue-chat-scroll"
 Vue.use(VueChatScroll)
 
+import Toaster from 'v-toaster'
+Vue.use(Toaster, {timeout:5000})
+
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -32,7 +35,8 @@ const app = new Vue({
             color:[],
             time:[]
         },
-        typing:''
+        typing:'',
+        numberOfUsers:0
     },
     watch: {
       message() {
@@ -86,6 +90,19 @@ const app = new Vue({
                     this.typing = '';
                 }
 
+            });
+
+        Echo.join('chat')
+            .here((users) => {
+                this.numberOfUsers = users.length;
+            })
+            .joining((user) => {
+                this.numberOfUsers += 1;
+                this.$toaster.success(user+'is joined chat room');
+            })
+            .leaving((user) => {
+                this.numberOfUsers -= 1;
+                console.log(user.name);
             });
     }
 });
